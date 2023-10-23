@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useContext } from 'react';
+import './App.scss';
+import { Route, Routes } from 'react-router-dom';
+import { LoginPage } from './components/LoginPage';
+import { TablePage } from './components/TablePage';
+import { MainContext } from './components/MainContext';
 
-function App() {
+export const App = () => {
+  const { isLoggedIn } = useContext(MainContext);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main className="section is-medium">
+      <Routes>
+        <Route path="/">
+          {isLoggedIn ? (
+            <Route index element={<TablePage />} />
+          ) : (
+            <Route index element={<LoginPage />} />
+          )}
+        </Route>
+      </Routes>
+    </main>
   );
 }
-
-export default App;
