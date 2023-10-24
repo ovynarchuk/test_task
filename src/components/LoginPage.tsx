@@ -1,26 +1,24 @@
 import './/LoginPage.scss';
 import { useState, useContext } from 'react'
 import { MainContext } from './MainContext';
+import { checkLogin } from '../api';
 
 export const LoginPage: React.FC = () => {
   const { setIsLoggedIn } = useContext(MainContext);
 
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [goodUserName, setGoodUserName] = useState(true);
-  const [goodPassword, setGoodPassword] = useState(true);
+  const [goodCredentials, setGoodCredentials] = useState(true);
 
-  const handleLogin = () => {
-    if (userName !== 'testuser') {
-      return setGoodUserName(false);
+  const handleLogin = async () => {
+    try {
+      const result = await checkLogin({username: userName, password});
+      if (result) {
+        setIsLoggedIn(true);
+      }
     }
-
-    if (password !== 'testpassword123') {
-      return setGoodPassword(false);
-    }
-
-    if (goodUserName && goodPassword) {
-      setIsLoggedIn(true);
+    catch(e) {
+      setGoodCredentials(false);
     }
   }
 
@@ -37,16 +35,11 @@ export const LoginPage: React.FC = () => {
               placeholder="testuser"
               required
               onChange={event => {
-                setGoodUserName(true);
                 setUserName(event.target.value)
               }}
             >
             </input>
           </div>
-
-          {!goodUserName && (
-            <p className="help is-danger">This username is invalid</p>
-          )}
         </div>
 
         <div className="field">
@@ -59,15 +52,15 @@ export const LoginPage: React.FC = () => {
               placeholder="testpassword123"
               required
               onChange={event => {
-                setGoodPassword(true)
+                setGoodCredentials(true);
                 setPassword(event.target.value)
               }}
             >
             </input>
           </div>
 
-          {!goodPassword && (
-            <p className="help is-danger">This password is invalid</p>
+          {!goodCredentials && (
+            <p className="help is-danger">Invalid credentials.</p>
           )}
         </div>
 
